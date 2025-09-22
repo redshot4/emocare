@@ -1,12 +1,34 @@
-num = int(input("enter any Number"))
-rev = 0
-while num > 0:
-    Rem = num % 10
-    num = num // 10
-    rev = rev * 10 + Rem
-print("The Reverse of the number", rev)
-##################
-# could also simply do this another way
+from flask import Flask, request, render_template_string
 
-num = input()
-print(int(num[::-1]))
+app = Flask(__name__)
+
+# Simple HTML template
+html = """
+<!doctype html>
+<html>
+  <head>
+    <title>User Greeting</title>
+  </head>
+  <body>
+    <h2>Enter your name:</h2>
+    <form method="post">
+      <input type="text" name="username" required>
+      <button type="submit">Submit</button>
+    </form>
+
+    {% if name %}
+      <h3>Hello, {{ name }}! 👋</h3>
+    {% endif %}
+  </body>
+</html>
+"""
+
+@app.route("/", methods=["GET", "POST"])
+def home():
+    name = None
+    if request.method == "POST":
+        name = request.form.get("username")
+    return render_template_string(html, name=name)
+
+if __name__ == "__main__":
+    app.run(debug=True)
